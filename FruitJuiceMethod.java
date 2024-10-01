@@ -1,132 +1,287 @@
+/*
+============================================================================================
+FILE : FruitJuiceMethod.java
+AUTHOR : Mikhail Alexi D. Hatulan, Arnold Joseph C. Najera Jr., & Korinne Margaret V. Sasil
+DESCRIPTION : Functions as a fruit juice vending machine implemented with Java Swing GUI.
+COPYRIGHT : 2024
+REVISION HISTORY
+Date:           	By:             			Description:
+09/25/2024      	Hatulan         			Prototype console class built and tested
+09/26/2024      	Najera & Sasil        		Initial Java Swing GUI implementation
+09/30/2024      	Hatulan & Sasil     		Debugging of Java Swing GUI Implementation
+10/01/2024      	Najera      				Modification of GUI messages and looping
+10/02/2024      	Hatulan    					Modification of cancel button and O.O.S
+												message condition
+10/02/2024     		Hatulan        				Javadoc and single-line documentation added
+============================================================================================
+*/
+
 import javax.swing.*;
 import java.text.DecimalFormat;
 
+/**
+ * The FruitJuiceMethod class simulates a fruit juice vending machine,
+ * allowing users to select and purchase juices while handling stock management
+ * and payment processing.
+ */
 public class FruitJuiceMethod {
 
-    private static DispenserType apple = new DispenserType();
-    private static DispenserType orange = new DispenserType(60.00);
-    private static DispenserType mango = new DispenserType(75.00);
-    private static DispenserType punch = new DispenserType(80.00);
-    private static CashRegister vendor = new CashRegister();
+    private static DispenserType apple = new DispenserType(); // Initialize dispenser for apple juice
+    private static DispenserType orange = new DispenserType(60.00); // Initialize dispenser for orange juice
+    private static DispenserType mango = new DispenserType(75.00); // Initialize dispenser for mango juice
+    private static DispenserType punch = new DispenserType(80.00); // Initialize dispenser for punch juice
+    private static CashRegister vendor = new CashRegister(); // Initialize cash register
 
+    /**
+     * The main method to start the Fruit Juice Machine application.
+     * It displays a welcome message and continuously shows the stock until the user decides to exit.
+     * 
+     * Written by: Hatulan, Najera, & Sasil
+     * 
+     * @param args command-line arguments (not used)
+     */
     public static void main(String[] args) {
         boolean continuing;
 
+        // Show welcome message
         JOptionPane.showMessageDialog(null, "Fruit Juice Machine");
 
+        // Loop until user chooses to exit
         do {
-            showStock();
-            selectProduct();
-            continuing = programTerminator();
+            showStock(); // Display available stock
+            continuing = programTerminator(); // Ask if the user wants to continue
         } while (continuing);
 
+        // Thank the user for using the machine
         JOptionPane.showMessageDialog(null, "Thank you for using the Fruit Juice Machine!");
     }
 
+    /**
+     * Displays the available juice stock and prompts the user to select a juice.
+     * If the user cancels, it returns to the menu.
+     * 
+     * Written by: Hatulan & Najera
+     */
     public static void showStock() {
-        StringBuilder stockInfo = new StringBuilder();
-        stockInfo.append("Select from the juices available:\n")
-	        .append("ID - | - ITEM NAME - | - ITEM QTY\n")
-	        .append(String.format("1    |  Apple Juice  | %d\n", apple.getNoOfItems()))
-	        .append(String.format("2    |  Orange Juice | %d\n", orange.getNoOfItems()))
-	        .append(String.format("3    |  Mango Juice  | %d\n", mango.getNoOfItems()))
-	        .append(String.format("4    |  Punch Juice  | %d\n", punch.getNoOfItems()));
+        String stockInfo = "a"; // Initialize stock info
+        stockInfo = JOptionPane.showInputDialog("Select from the juices available:\nID - | - ITEM NAME - | - ITEM QTY\n1    |  Apple Juice  | " + apple.getNoOfItems() + "\n2    |  Orange Juice | " + orange.getNoOfItems() + "\n3    |  Mango Juice  | " + mango.getNoOfItems() + "\n4    |  Punch Juice  | " + punch.getNoOfItems() + "\n\nEnter juice choice (input num)");
 
-        JOptionPane.showMessageDialog(null, stockInfo.toString());
+        // Check for cancellation
+        if (stockInfo == null) {
+            return; // Go back to menu without exiting
+        }
+
+        selectProduct(stockInfo); // Proceed to product selection
     }
 
-    public static void selectProduct() {
-    	String input = JOptionPane.showInputDialog( "Enter juice choice (input num):");
-        int choice = Integer.parseInt(input);
+    /**
+     * Processes the user's choice of juice and verifies stock before proceeding with the order.
+     * 
+     * Written by: Hatulan & Najera
+     * 
+     * @param input the user's input representing their juice choice
+     */
+    public static void selectProduct(String input) {
+        int choice;
+        try {
+            choice = Integer.parseInt(input); // Parse the user's choice
+        } catch (NumberFormatException e) {
+            // Handle invalid input
+            JOptionPane.showMessageDialog(null, "The inputted choice is invalid. Please try again.");
+            showStock(); // Go back to menu if invalid choice
+            return; // Exit the method
+        }
 
+        DispenserType selectedJuice = null; // Initialize selected juice
+
+        // Determine which juice was selected based on user input
         switch (choice) {
             case 1:
-                processOrder(apple);
+                selectedJuice = apple; // Set selected juice to apple
                 break;
             case 2:
-                processOrder(orange);
+                selectedJuice = orange; // Set selected juice to orange
                 break;
             case 3:
-                processOrder(mango);
+                selectedJuice = mango; // Set selected juice to mango
                 break;
             case 4:
-                processOrder(punch);
+                selectedJuice = punch; // Set selected juice to punch
                 break;
             default:
+                // Handle invalid choice
                 JOptionPane.showMessageDialog(null, "The inputted choice is invalid. Please try again.");
-                break;
+                showStock(); // Go back to menu if out of stock
+                return; // Exit the method
+        }
+
+        // Check stock before processing order
+        if (selectedJuice.getNoOfItems() <= 0) {
+            JOptionPane.showMessageDialog(null, "Sorry, this product is out of stock."); // Inform user of stock issue
+            showStock(); // Go back to menu if out of stock
+        } else {
+            processOrder(selectedJuice, choice); // Process the order for the selected juice
         }
     }
 
-    private static void processOrder(DispenserType juice) {
-        if (juice.verifyStock()) {
-            String countInput = JOptionPane.showInputDialog("How many items would you like to purchase?");
-            int count = receiveCount(juice.getNoOfItems(), countInput);
+    /**
+     * Processes the order for the selected juice, handling quantity input and payment.
+     * 
+     * Written by: Hatulan & Najera
+     * 
+     * @param juice the selected juice to process the order for
+     * @param choice the user's choice of juice ID
+     */
+    private static void processOrder(DispenserType juice, int choice) {
+        String countInput;
+        // Prompt for quantity of juice to purchase
+        countInput = JOptionPane.showInputDialog("Juice choice:\nID - | - ITEM NAME - | - ITEM QTY\n1    |  " + getJuiceName(choice) + "  | " + juice.getNoOfItems() + "\nHow many items would you like to purchase?");
 
-            double actualCost = count * juice.getCost();
-            DecimalFormat df = new DecimalFormat("0.00");
+        // Check for cancellation
+        if (countInput == null) {
+            showStock(); // Go back to menu
+            return; // Exit the method
+        }
 
-            String cashInput = JOptionPane.showInputDialog("Total cost to pay: Php. " + df.format(actualCost) + "\nEnter amount to pay: Php.");
-            double cash = receiveCash(actualCost, cashInput);
+        // Get validated count of juice to purchase
+        int count = receiveCount(juice.getNoOfItems(), countInput);
+        double actualCost = count * juice.getCost(); // Calculate total cost
+        DecimalFormat df = new DecimalFormat("0.00"); // Format for currency
 
-            juice.makeSale(count);
-            vendor.acceptAmount(actualCost);
+        // Prompt for cash input
+        String cashInput = JOptionPane.showInputDialog("Total cost to pay: Php. " + df.format(actualCost) + "\nEnter amount to pay: Php.");
 
-            double change = returnChange(cash, actualCost);
-            JOptionPane.showMessageDialog(null, "Your change is: Php. " + df.format(change));
+        // Check for cancellation
+        if (cashInput == null) {
+            showStock(); // Go back to menu
+            return; // Exit the method
+        }
 
-            double currentBalance = vendor.getCurrentBalance();
-            JOptionPane.showMessageDialog(null, "Current balance in register: Php. " + df.format(currentBalance));
+        double cash = receiveCash(actualCost, cashInput); // Get validated cash input
+
+        // Update stock and register
+        juice.makeSale(count);
+        vendor.acceptAmount(actualCost);
+
+        double change = returnChange(cash, actualCost); // Calculate change to return
+        JOptionPane.showMessageDialog(null, "Your change is: Php. " + df.format(change)); // Display change
+
+        double currentBalance = vendor.getCurrentBalance(); // Get current balance in register
+        JOptionPane.showMessageDialog(null, "Current balance in register: Php. " + df.format(currentBalance)); // Display current balance
+    }
+
+    /**
+     * Retrieves the name of the juice based on the user's choice.
+     * 
+     * Written by: Najera & Sasil
+     * 
+     * @param choice the user's choice of juice ID
+     * @return the name of the juice
+     */
+    private static String getJuiceName(int choice) {
+        switch (choice) {
+            case 1: return "Apple Juice"; // Return name for apple juice
+            case 2: return "Orange Juice"; // Return name for orange juice
+            case 3: return "Mango Juice"; // Return name for mango juice
+            case 4: return "Punch Juice"; // Return name for punch juice
+            default: return "Unknown Juice"; // Default case
         }
     }
 
+    /**
+     * Receives the quantity input from the user and validates it against available stock.
+     * 
+     * Written by: Hatulan, Najera, & Sasil
+     * 
+     * @param stock the current stock of the selected juice
+     * @param input the user's input for quantity
+     * @return the validated quantity
+     */
     public static int receiveCount(int stock, String input) {
         int newValue;
         try {
-            newValue = Integer.parseInt(input);
+            newValue = Integer.parseInt(input); // Parse the user's input
             if (newValue > 0 && newValue <= stock) {
-                return newValue;
+                return newValue; // Valid quantity
             } else {
+                // Handle invalid quantity input
                 JOptionPane.showMessageDialog(null, "Please enter a valid quantity between 1 and " + stock + ".");
-                return receiveCount(stock, JOptionPane.showInputDialog("Enter quantity (1 to " + stock + "):"));
+                return receiveCount(stock, JOptionPane.showInputDialog("Enter quantity (1 to " + stock + "):")); // Prompt again
             }
         } catch (NumberFormatException e) {
+            // Handle non-integer input
             JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid integer.");
-            return receiveCount(stock, JOptionPane.showInputDialog("Enter quantity (1 to " + stock + "):"));
+            return receiveCount(stock, JOptionPane.showInputDialog("Enter quantity (1 to " + stock + "):")); // Prompt again
         }
     }
 
+    /**
+     * Receives and validates the cash amount input from the user.
+     * 
+     * Written by: Hatulan, Najera, & Sasil
+     * 
+     * @param actualCost the total cost of the order
+     * @param input the user's cash input
+     * @return the validated cash amount
+     */
     public static double receiveCash(double actualCost, String input) {
-        
-    	DecimalFormat df = new DecimalFormat("0.00");
-    	double newValue;
-    	
+        DecimalFormat df = new DecimalFormat("0.00"); // Currency format
+        double newValue;
+
         try {
-            newValue = Double.parseDouble(input);
+            newValue = Double.parseDouble(input); // Parse cash input
             if (verifyCashAmount(newValue, actualCost)) {
-                return newValue;
+                return newValue; // Valid cash amount
             } else {
+                // Handle insufficient cash input
                 JOptionPane.showMessageDialog(null, "Please enter an amount greater than or equal to Php. " + df.format(actualCost));
-                return receiveCash(actualCost, JOptionPane.showInputDialog("Enter amount to pay (at least Php. " + df.format(actualCost) + "): Php."));
+                return receiveCash(actualCost, JOptionPane.showInputDialog("Enter amount to pay (at least Php. " + df.format(actualCost) + "): Php.")); // Prompt again
             }
         } catch (NumberFormatException e) {
+            // Handle non-numeric input
             JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid cash amount.");
-            return receiveCash(actualCost, JOptionPane.showInputDialog("Enter amount to pay (at least Php. " + df.format(actualCost) + "): Php."));
+            return receiveCash(actualCost, JOptionPane.showInputDialog("Enter amount to pay (at least Php. " + df.format(actualCost) + "): Php.")); // Prompt again
         }
     }
 
+    /**
+     * Verifies if the entered cash amount is sufficient to cover the actual cost.
+     * 
+     * Written by: Hatulan
+     * 
+     * @param newValue the cash amount provided by the user
+     * @param actualCost the total cost of the order
+     * @return true if sufficient, false otherwise
+     */
     private static boolean verifyCashAmount(double newValue, double actualCost) {
-        return newValue >= actualCost;
+        return newValue >= actualCost; // Return true if cash is sufficient
     }
 
+    /**
+     * Calculates the change to return to the user after a successful payment.
+     * 
+     * Written by: Hatulan
+     * 
+     * @param newCash the cash amount provided by the user
+     * @param actualCost the total cost of the order
+     * @return the change to return
+     */
     private static double returnChange(double newCash, double actualCost) {
-        return newCash - actualCost;
+        return newCash - actualCost; // Calculate and return change
     }
 
+    /**
+     * Prompts the user to decide whether to continue using the machine.
+     * 
+     * Written by: Hatulan, Najera, & Sasil
+     * 
+     * @return true if the user wants to continue, false otherwise
+     */
     private static boolean programTerminator() {
-    	boolean validInput = true;
-    	
-    	String[] options = {"Yes", "No"};
+        boolean validInput = true; // Initialize input validity
+
+        // Options for user to continue or not
+        String[] options = {"Yes", "No"};
         int choice = JOptionPane.showOptionDialog(null,
             "Do you like to purchase again? (Y/N) ",
             "Continuing Choice",
@@ -135,15 +290,17 @@ public class FruitJuiceMethod {
             null,
             options,
             options[0]);
-        
+
+        // Determine user choice
         switch (choice) {
-	        case 0:
-	        	break;
-	        case 1:
-	        	validInput = false;
-	        	break;
+            case 0:
+                break; // User chose to continue
+            case 1:
+                validInput = false; // User chose not to continue
+                break;
         }
-        
-        return validInput;
+
+        return validInput; // Return user's choice
     }
 }
+
