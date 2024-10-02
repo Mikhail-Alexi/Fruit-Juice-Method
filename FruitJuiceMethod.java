@@ -7,13 +7,12 @@ COPYRIGHT : 2024
 REVISION HISTORY
 Date:           	By:             			Description:
 09/25/2024      	Hatulan         			Prototype console class built and tested
-09/26/2024      	Najera & Sasil        			Initial Java Swing GUI implementation
-09/30/2024      	Hatulan & Sasil     			Debugging of Java Swing GUI Implementation
+09/26/2024      	Najera & Sasil        		Initial Java Swing GUI implementation
+09/30/2024      	Hatulan & Sasil     		Debugging of Java Swing GUI Implementation
 10/01/2024      	Najera      				Modification of GUI messages and looping
-10/02/2024      	Hatulan    				Modification of cancel button and O.o.S.
-											message condition
+10/02/2024      	Hatulan    					Modification of cancel button and O.o.S.
+												message condition
 10/02/2024     		Hatulan        				Javadoc and single-line documentation added
-10/02/2024     		Hatulan        				Debugging of Java Swing GUI Implementation
 ============================================================================================
 */
 
@@ -27,7 +26,7 @@ import java.text.DecimalFormat;
  */
 public class FruitJuiceMethod {
 
-    private static DispenserType apple;
+	private static DispenserType apple;
     private static DispenserType orange;
     private static DispenserType mango;
     private static DispenserType punch;
@@ -63,9 +62,7 @@ public class FruitJuiceMethod {
 
     /** 
      * Initializes the dispenser and cash register components. 
-     *
-     * Written by: Hatulan 
-     */ 
+    */ 
     private static void initializeComponents() { 
     	apple = new DispenserType(); // Initialize dispenser for apple juice 
     	orange = new DispenserType(60.00); // Initialize dispenser for orange juice 
@@ -245,8 +242,6 @@ public class FruitJuiceMethod {
 
     /**
      * Receives and validates the cash amount input from the user.
-     *
-     * Written by: Hatulan, Najera, & Sasil
      * 
      * @param actualCost the total cost of the order
      * @param input the user's cash input
