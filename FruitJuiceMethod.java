@@ -26,11 +26,13 @@ import java.text.DecimalFormat;
  */
 public class FruitJuiceMethod {
 
-    private static DispenserType apple = new DispenserType(); // Initialize dispenser for apple juice
-    private static DispenserType orange = new DispenserType(60.00); // Initialize dispenser for orange juice
-    private static DispenserType mango = new DispenserType(75.00); // Initialize dispenser for mango juice
-    private static DispenserType punch = new DispenserType(80.00); // Initialize dispenser for punch juice
-    private static CashRegister vendor = new CashRegister(); // Initialize cash register
+	private static DispenserType apple;
+    private static DispenserType orange;
+    private static DispenserType mango;
+    private static DispenserType punch;
+    private static CashRegister vendor;
+    
+    private static DecimalFormat df;
 
     /**
      * The main method to start the Fruit Juice Machine application.
@@ -41,7 +43,9 @@ public class FruitJuiceMethod {
      * @param args command-line arguments (not used)
      */
     public static void main(String[] args) {
-        boolean continuing;
+    	initializeComponents();
+    	
+    	boolean continuing;
 
         // Show welcome message
         JOptionPane.showMessageDialog(null, "Fruit Juice Machine");
@@ -56,6 +60,18 @@ public class FruitJuiceMethod {
         JOptionPane.showMessageDialog(null, "Thank you for using the Fruit Juice Machine!");
     }
 
+    /** 
+     * Initializes the dispenser and cash register components. 
+    */ 
+    private static void initializeComponents() { 
+    	apple = new DispenserType(); // Initialize dispenser for apple juice 
+    	orange = new DispenserType(60.00); // Initialize dispenser for orange juice 
+    	mango = new DispenserType(75.00); // Initialize dispenser for mango juice 
+    	punch = new DispenserType(80.00); // Initialize dispenser for punch juice 
+    	vendor = new CashRegister(); // Initialize cash register 
+    	df = new DecimalFormat("0.00"); // Format for currency
+    }
+    
     /**
      * Displays the available juice stock and prompts the user to select a juice.
      * If the user cancels, it returns to the menu.
@@ -134,8 +150,9 @@ public class FruitJuiceMethod {
      */
     private static void processOrder(DispenserType juice, int choice) {
         String countInput;
+
         // Prompt for quantity of juice to purchase
-        countInput = JOptionPane.showInputDialog("Juice choice:\nID - | - ITEM NAME - | - ITEM QTY\n1    |  " + getJuiceName(choice) + "  | " + juice.getNoOfItems() + "\nHow many items would you like to purchase?");
+        countInput = JOptionPane.showInputDialog("Juice choice:\nID - | - ITEM NAME - | - ITEM QTY - | - ITEM PRICE\n1    |  " + getJuiceName(choice) + "   |           " + juice.getNoOfItems() + "         | Php. " + df.format(juice.getCost()) + "\nHow many items would you like to purchase?");
 
         // Check for cancellation
         if (countInput == null) {
@@ -146,7 +163,6 @@ public class FruitJuiceMethod {
         // Get validated count of juice to purchase
         int count = receiveCount(juice.getNoOfItems(), countInput);
         double actualCost = count * juice.getCost(); // Calculate total cost
-        DecimalFormat df = new DecimalFormat("0.00"); // Format for currency
 
         // Prompt for cash input
         String cashInput = JOptionPane.showInputDialog("Total cost to pay: Php. " + df.format(actualCost) + "\nEnter amount to pay: Php.");
@@ -166,7 +182,7 @@ public class FruitJuiceMethod {
         double change = returnChange(cash, actualCost); // Calculate change to return
         JOptionPane.showMessageDialog(null, "Your change is: Php. " + df.format(change)); // Display change
 
-        double currentBalance = vendor.getCurrentBalance(); // Get current balance in register
+        double currentBalance = vendor.getCurrentBalance() - change; // Get current balance in register
         JOptionPane.showMessageDialog(null, "Current balance in register: Php. " + df.format(currentBalance)); // Display current balance
     }
 
@@ -197,8 +213,16 @@ public class FruitJuiceMethod {
      * @param input the user's input for quantity
      * @return the validated quantity
      */
+
     public static int receiveCount(int stock, String input) {
+
+        if (input == null) {
+            showStock(); // Go back to menu if canceled
+            return 0; // Return a dummy value, as this will not be used
+        }
+
         int newValue;
+
         try {
             newValue = Integer.parseInt(input); // Parse the user's input
             if (newValue > 0 && newValue <= stock) {
@@ -215,6 +239,7 @@ public class FruitJuiceMethod {
         }
     }
 
+
     /**
      * Receives and validates the cash amount input from the user.
      * 
@@ -222,8 +247,13 @@ public class FruitJuiceMethod {
      * @param input the user's cash input
      * @return the validated cash amount
      */
+
     public static double receiveCash(double actualCost, String input) {
-        DecimalFormat df = new DecimalFormat("0.00"); // Currency format
+        if (input == null) {
+            showStock(); // Go back to menu if canceled
+            return 0; // Return a dummy value, as this will not be used
+        }
+
         double newValue;
 
         try {
@@ -307,5 +337,5 @@ public class FruitJuiceMethod {
 
         return validInput; // Return user's choice
     }
+    
 }
-
