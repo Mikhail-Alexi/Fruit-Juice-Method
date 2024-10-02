@@ -62,7 +62,9 @@ public class FruitJuiceMethod {
 
     /** 
      * Initializes the dispenser and cash register components. 
-    */ 
+     *
+     * Written by: Hatulan 
+     */ 
     private static void initializeComponents() { 
     	apple = new DispenserType(); // Initialize dispenser for apple juice 
     	orange = new DispenserType(60.00); // Initialize dispenser for orange juice 
