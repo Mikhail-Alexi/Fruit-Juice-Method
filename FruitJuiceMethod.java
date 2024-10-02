@@ -5,14 +5,14 @@ AUTHOR : Mikhail Alexi D. Hatulan, Arnold Joseph C. Najera Jr., & Korinne Margar
 DESCRIPTION : Functions as a fruit juice vending machine implemented with Java Swing GUI.
 COPYRIGHT : 2024
 REVISION HISTORY
-Date:           	By:             			Description:
-09/25/2024      	Hatulan         			Prototype console class built and tested
-09/26/2024      	Najera & Sasil        		Initial Java Swing GUI implementation
-09/30/2024      	Hatulan & Sasil     		Debugging of Java Swing GUI Implementation
-10/01/2024      	Najera      				Modification of GUI messages and looping
-10/02/2024      	Hatulan    					Modification of cancel button and O.O.S
-												message condition
-10/02/2024     		Hatulan        				Javadoc and single-line documentation added
+Date:           	By:             	Description:
+09/25/2024      	Hatulan         	Prototype console class built and tested
+09/26/2024      	Najera & Sasil        	Initial Java Swing GUI implementation
+09/30/2024      	Hatulan & Sasil     	Debugging of Java Swing GUI Implementation
+10/01/2024      	Najera      		Modification of GUI messages and looping
+10/02/2024      	Hatulan    		Modification of cancel button and O.O.S
+						message condition
+10/02/2024     		Hatulan        		Javadoc and single-line documentation added
 ============================================================================================
 */
 
