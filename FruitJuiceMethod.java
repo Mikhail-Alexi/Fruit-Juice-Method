@@ -26,7 +26,7 @@ import java.text.DecimalFormat;
  */
 public class FruitJuiceMethod {
 
-	private static DispenserType apple;
+    private static DispenserType apple;
     private static DispenserType orange;
     private static DispenserType mango;
     private static DispenserType punch;
