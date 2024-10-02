@@ -244,6 +244,8 @@ public class FruitJuiceMethod {
 
     /**
      * Receives and validates the cash amount input from the user.
+     *
+     * Written by: Hatulan, Najera, & Sasil
      * 
      * @param actualCost the total cost of the order
      * @param input the user's cash input
