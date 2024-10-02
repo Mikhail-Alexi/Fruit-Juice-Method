@@ -5,14 +5,14 @@ AUTHOR : Mikhail Alexi D. Hatulan, Arnold Joseph C. Najera Jr., & Korinne Margar
 DESCRIPTION : Functions as a fruit juice vending machine implemented with Java Swing GUI.
 COPYRIGHT : 2024
 REVISION HISTORY
-Date:           	By:             	Description:
-09/25/2024      	Hatulan         	Prototype console class built and tested
-09/26/2024      	Najera & Sasil        	Initial Java Swing GUI implementation
-09/30/2024      	Hatulan & Sasil     	Debugging of Java Swing GUI Implementation
-10/01/2024      	Najera      		Modification of GUI messages and looping
-10/02/2024      	Hatulan    		Modification of cancel button and O.O.S
-						message condition
-10/02/2024     		Hatulan        		Javadoc and single-line documentation added
+Date:           	By:             			Description:
+09/25/2024      	Hatulan         			Prototype console class built and tested
+09/26/2024      	Najera & Sasil        		Initial Java Swing GUI implementation
+09/30/2024      	Hatulan & Sasil     		Debugging of Java Swing GUI Implementation
+10/01/2024      	Najera      				Modification of GUI messages and looping
+10/02/2024      	Hatulan    					Modification of cancel button and O.o.S.
+												message condition
+10/02/2024     		Hatulan        				Javadoc and single-line documentation added
 ============================================================================================
 */
 
@@ -218,8 +218,6 @@ public class FruitJuiceMethod {
     /**
      * Receives and validates the cash amount input from the user.
      * 
-     * Written by: Hatulan, Najera, & Sasil
-     * 
      * @param actualCost the total cost of the order
      * @param input the user's cash input
      * @return the validated cash amount
@@ -230,8 +228,15 @@ public class FruitJuiceMethod {
 
         try {
             newValue = Double.parseDouble(input); // Parse cash input
-            if (verifyCashAmount(newValue, actualCost)) {
+            double change = newValue - actualCost; // Calculate change
+            double currentBalance = vendor.getCurrentBalance(); // Get current balance in register
+
+            if (verifyCashAmount(newValue, actualCost) && change <= currentBalance) {
                 return newValue; // Valid cash amount
+            } else if (change > currentBalance) {
+                // Handle insufficient cash for change
+                JOptionPane.showMessageDialog(null, "Insufficient cash in the register to give change of Php. " + df.format(change) + ". Please enter a different amount.");
+                return receiveCash(actualCost, JOptionPane.showInputDialog("Enter amount to pay (at least Php. " + df.format(actualCost) + "): Php.")); // Prompt again
             } else {
                 // Handle insufficient cash input
                 JOptionPane.showMessageDialog(null, "Please enter an amount greater than or equal to Php. " + df.format(actualCost));
